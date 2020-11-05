@@ -3,7 +3,7 @@ In this folder there are different version of the same ML model written in diffe
 In particular we chose the LeNet network as example.
 
 ### LeNet structure
-The structure of the model is the following (here we show the Keras one):
+In the following the structure of the model written in Keras is shown:
 ```
 model = Sequential()
 model.add(Conv2D(filters=6, kernel_size=(5,5), activation='relu', padding='same', input_shape=in_shape))
