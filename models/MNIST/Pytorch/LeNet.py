@@ -54,7 +54,7 @@ def train(numb_epoch=3, lr=0.1, device="cpu"):
         accuracy_val = float(validate(cnn, val_dl))
         accuracies_train.append(accuracy_train)
         accuracies_val.append(accuracy_val)
-        print(f"Epoch {epoch+1};\taccuracy_train: {accuracy_train};\taccuracy_val: {accuracy_val}")
+        print(f"Epoch {epoch+1}\tbatches: {i}/{i}\taccuracy_train: {accuracy_train}\taccuracy_val: {accuracy_val}")
         #if accuracy_val > max_accuracy:
         #    best_model = copy.deepcopy(cnn)
         #    max_accuracy = accuracy_val
