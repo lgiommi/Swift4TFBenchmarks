@@ -24,3 +24,7 @@ export PATH=/Library/Developer/Toolchains/swift-latest/usr/bin:$PATH
 export PYTHON_LIBRARY=/opt/anaconda3/envs/uproot/lib/libpython3.8.dylib
 export PYTHONPATH=/opt/anaconda3/envs/uproot/lib/python3.8:/opt/anaconda3/envs/uproot/lib/python3.8/lib-dynload:/opt/anaconda3/envs/uproot/lib/python3.8/site-packages
 ```
+Then you clone the repo and start using it.
+```
+git clone https://github.com/lgiommi/Swift4TFBenchmarks
+
