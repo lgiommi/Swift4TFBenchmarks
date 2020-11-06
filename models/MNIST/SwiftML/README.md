@@ -15,6 +15,9 @@ This will initialize the project and create Package.swift file which
 you can later customize to include your set of dependencies, etc.
 This is already done for this package.
 
+You need to clone the [swift-model](https://github.com/tensorflow/swift-models.git) repository, in this case just outside the Swift4TFBenchmarks folder.
+Alternatively in Package.swift you can change the dependency of this repo to the remote one.
+
 To maintain the codebase you need to use the following commands (within
 this project area):
 ```
