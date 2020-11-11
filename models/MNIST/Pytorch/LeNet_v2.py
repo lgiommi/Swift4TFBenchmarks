@@ -3,6 +3,7 @@
 
 import numpy as np
 from datetime import datetime 
+import json
 
 import torch
 import torch.nn as nn
@@ -16,11 +17,24 @@ import matplotlib.pyplot as plt
 # check device
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
+import argparse
+
+parser = argparse.ArgumentParser(prog='PROG')
+parser.add_argument("--epochs", action="store", dest="epochs", default=None, \
+            help="number of epochs used to train the model")
+parser.add_argument("--lr", action="store", dest="lr", default=None, \
+            help="learning rate")
+parser.add_argument("--batch_size", action="store", dest="batch_size", default=None, \
+            help="batch size")
+
+opts = parser.parse_args()
+print(f"learning rate: {opts.lr}\tbatch size: {opts.batch_size}\tepochs: {opts.epochs}")
+
 # parameters
 RANDOM_SEED = 42
-LEARNING_RATE = 0.01
-BATCH_SIZE = 128
-N_EPOCHS = 15
+LEARNING_RATE = float(opts.lr)
+BATCH_SIZE = int(opts.batch_size)
+N_EPOCHS = int(opts.epochs)
 
 IMG_SIZE = 28
 N_CLASSES = 10
@@ -128,6 +142,8 @@ def training_loop(model, criterion, optimizer, train_loader, valid_loader, epoch
     
     # set objects for storing metrics
     best_loss = 1e10
+    train_accuracies = []
+    valid_accuracies = []
     train_losses = []
     valid_losses = []
  
@@ -147,6 +163,8 @@ def training_loop(model, criterion, optimizer, train_loader, valid_loader, epoch
             
             train_acc = get_accuracy(model, train_loader, device=device)
             valid_acc = get_accuracy(model, valid_loader, device=device)
+            train_accuracies.append(float(train_acc))
+            valid_accuracies.append(float(valid_acc))
                 
             print(f'{datetime.now().time().replace(microsecond=0)} --- '
                   f'Epoch: {epoch}\t'
@@ -157,7 +175,7 @@ def training_loop(model, criterion, optimizer, train_loader, valid_loader, epoch
 
     #plot_losses(train_losses, valid_losses)
     
-    return model, optimizer, (train_losses, valid_losses)
+    return model, optimizer, (train_accuracies, valid_accuracies, train_losses, valid_losses)
 
 
 # define transforms
@@ -220,7 +238,18 @@ class LeNet5(nn.Module):
 torch.manual_seed(RANDOM_SEED)
 
 model = LeNet5(N_CLASSES).to(DEVICE)
-optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
+optimizer = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE)
 criterion = nn.CrossEntropyLoss()
-
 model, optimizer, _ = training_loop(model, criterion, optimizer, train_loader, valid_loader, N_EPOCHS, DEVICE)
+
+results={}
+results['accuracy']=_[0]
+results['val_accuracy']=_[1]
+results['loss']=_[2]
+results['val_loss']=_[3]
+
+with open('../results.txt') as json_file:
+    data = json.load(json_file)
+data["pytorch"]=results
+with open('../results.txt', 'w') as outfile:
+    json.dump(data, outfile)
