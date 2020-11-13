@@ -21,6 +21,8 @@ parser.add_argument("--lr", action="store", dest="lr", default=None, \
             help="learning rate")
 parser.add_argument("--batch_size", action="store", dest="batch_size", default=None, \
             help="batch size")
+parser.add_argument("--out", action="store", dest="out", default=None, \
+            help="name of the output file with results")
 
 opts = parser.parse_args()
 print(f"learning rate: {opts.lr}\tbatch size: {opts.batch_size}\tepochs: {opts.epochs}")
@@ -28,6 +30,7 @@ print(f"learning rate: {opts.lr}\tbatch size: {opts.batch_size}\tepochs: {opts.e
 LEARNING_RATE = float(opts.lr)
 BATCH_SIZE = int(opts.batch_size)
 N_EPOCHS = int(opts.epochs)
+OUT = str(opts.out)
 
 # load dataset
 (x_train, y_train), (x_test, y_test) = load_data()
@@ -58,16 +61,16 @@ model.compile(optimizer=opt, loss='sparse_categorical_crossentropy', metrics=['a
 # fit the model
 time0=time.time()
 history=model.fit(x_train, y_train, epochs=N_EPOCHS, batch_size=BATCH_SIZE, validation_data=(x_test,y_test), verbose=1)
-print(f"Time for fitting: {time.time()-time0}")
+trainTime=time.time()-time0
+results=history.history
+results['trainTime']=trainTime
+print(f"Training time: {results['trainTime']}")
 
-results={}
-results['keras']={}
-for key in list(history.history.keys()):
-    results['keras'][key]=history.history[key]
-print (results['keras'])
-
-with open('../results.txt', 'w') as outfile:
-    json.dump(results, outfile)
+with open(OUT) as json_file:
+    data = json.load(json_file)
+data["Keras"]=results
+with open(OUT, 'w') as outfile:
+    json.dump(data, outfile)
 
 # evaluate the model
 #loss, acc = model.evaluate(x_test, y_test, verbose=0)

@@ -3,6 +3,7 @@
 
 import numpy as np
 from datetime import datetime 
+import time
 import json
 
 import torch
@@ -26,6 +27,8 @@ parser.add_argument("--lr", action="store", dest="lr", default=None, \
             help="learning rate")
 parser.add_argument("--batch_size", action="store", dest="batch_size", default=None, \
             help="batch size")
+parser.add_argument("--out", action="store", dest="out", default=None, \
+            help="name of the output file with results")
 
 opts = parser.parse_args()
 print(f"learning rate: {opts.lr}\tbatch size: {opts.batch_size}\tepochs: {opts.epochs}")
@@ -35,6 +38,7 @@ RANDOM_SEED = 42
 LEARNING_RATE = float(opts.lr)
 BATCH_SIZE = int(opts.batch_size)
 N_EPOCHS = int(opts.epochs)
+OUT = str(opts.out)
 
 IMG_SIZE = 28
 N_CLASSES = 10
@@ -240,16 +244,19 @@ torch.manual_seed(RANDOM_SEED)
 model = LeNet5(N_CLASSES).to(DEVICE)
 optimizer = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE)
 criterion = nn.CrossEntropyLoss()
+time0=time.time()
 model, optimizer, _ = training_loop(model, criterion, optimizer, train_loader, valid_loader, N_EPOCHS, DEVICE)
-
+trainTime=time.time()-time0
 results={}
 results['accuracy']=_[0]
 results['val_accuracy']=_[1]
 results['loss']=_[2]
 results['val_loss']=_[3]
+results['trainTime']=trainTime
+print(f"Training time: {results['trainTime']}")
 
-with open('../results.txt') as json_file:
+with open(OUT) as json_file:
     data = json.load(json_file)
-data["pytorch"]=results
-with open('../results.txt', 'w') as outfile:
+data["Pytorch"]=results
+with open(OUT, 'w') as outfile:
     json.dump(data, outfile)

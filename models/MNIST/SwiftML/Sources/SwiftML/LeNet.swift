@@ -16,8 +16,10 @@ import Datasets
 import TensorFlow
 import TrainingLoop
 import CoreFoundation
+import Foundation
 
-func LeNetTrainMNIST(_ epochCount: Int = 5, _ batchSize: Int = 128) {
+
+func LeNetTrainMNIST(_ epochCount: Int = 5, _ learningRate: Float = 0.1, _ batchSize: Int = 128, _ out : String = "results.json") {
 
     // Until https://github.com/tensorflow/swift-apis/issues/993 is fixed, default to the eager-mode
     // device on macOS instead of X10.
@@ -40,8 +42,8 @@ func LeNetTrainMNIST(_ epochCount: Int = 5, _ batchSize: Int = 128) {
         Dense<Float>(inputSize: 40, outputSize: 20, activation: relu)
         Dense<Float>(inputSize: 20, outputSize: 10)
     }
-
-    let optimizer = SGD(for: classifier, learningRate: 0.1)
+    
+    let optimizer = SGD(for: classifier, learningRate: learningRate)
 
     let trainingProgress = TrainingProgress()
     var trainingLoop = TrainingLoop(
@@ -53,12 +55,51 @@ func LeNetTrainMNIST(_ epochCount: Int = 5, _ batchSize: Int = 128) {
     
     let startTime = CFAbsoluteTimeGetCurrent()
     try! trainingLoop.fit(&classifier, epochs: epochCount, on: device)
-    let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
-    print("Time elapsed: \(Double(timeElapsed)) s.")
+    let trainTime = CFAbsoluteTimeGetCurrent() - startTime
+    print("Training time: \(Double(trainTime)) s.")
     
     // plot our accuracies and losses
     let acc = trainingProgress.accuracies
     let loss = trainingProgress.losses
-    plot(acc: acc, loss: loss, fname: "mnist.pdf")
+    var n_batches : [Int] = [60000,10000]
+    n_batches = n_batches.map { Double($0)/Double(batchSize) }.map { Int(floor($0)) }
+    n_batches[1]+=1
+    var accT_list : [Double] = []
+    var accV_list : [Double] = []
+    var lossT_list : [Double] = []
+    var lossV_list : [Double] = []
+    for i in 0..<acc.count {
+      if i != 0 && ((i-n_batches[0]) % (n_batches[0] + n_batches[1]) == 0 || i == n_batches[0]) {
+        accT_list.append(Double(acc[i-1]))
+        lossT_list.append(Double(loss[i-1]))
+      }
+      if i != 0 && i % (n_batches[0]+n_batches[1]) == 0 {
+        accV_list.append(Double(acc[i-1]))
+        lossV_list.append(Double(loss[i-1]))
+      }
+    }
+    
+    accV_list.append(Double(acc[acc.count-1]))
+    lossV_list.append(Double(loss[loss.count-1]))
+    
+    let dictionary: [String: Any] = ["Swift": ["loss": lossT_list, "accuracy": accT_list, "val_loss": lossV_list, "val_accuracy": accV_list, "trainTime": trainTime]]
+    
+    do {
+        let fileURL = try FileManager.default
+            .url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+            .appendingPathComponent(out)
+
+        try JSONSerialization.data(withJSONObject: dictionary)
+            .write(to: fileURL)
+    } catch {
+        print(error)
+    }
+
+    
+    print("Accuracy Training: \(accT_list) ")
+    print("Accuracy Validation: \(accV_list) ")
+    print("Loss Training: \(lossT_list) ")
+    print("Loss Validation: \(lossV_list) ")
+    //plot(acc: acc, loss: loss, fname: "mnist.pdf")
 }
 
