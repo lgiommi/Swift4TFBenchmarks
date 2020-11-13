@@ -13,15 +13,20 @@ import time
 import json
 
 import argparse
+import textwrap
 
-parser = argparse.ArgumentParser(prog='PROG')
-parser.add_argument("--epochs", action="store", dest="epochs", default=None, \
+parser = argparse.ArgumentParser(prog='PROG', formatter_class=argparse.RawDescriptionHelpFormatter,\
+    epilog=textwrap.dedent('''\
+         Here an example on how to run the script:
+         python3 LeNet.py --epochs 2 --lr 0.1 --batch_size 128 --out results.json
+         '''))
+parser.add_argument("--epochs", action="store", dest="epochs", default=2, \
             help="number of epochs used to train the model")
-parser.add_argument("--lr", action="store", dest="lr", default=None, \
+parser.add_argument("--lr", action="store", dest="lr", default=0.1, \
             help="learning rate")
-parser.add_argument("--batch_size", action="store", dest="batch_size", default=None, \
+parser.add_argument("--batch_size", action="store", dest="batch_size", default=128, \
             help="batch size")
-parser.add_argument("--out", action="store", dest="out", default=None, \
+parser.add_argument("--out", action="store", dest="out", default="results.json", \
             help="name of the output file with results")
 
 opts = parser.parse_args()
