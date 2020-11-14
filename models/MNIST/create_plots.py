@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 parser = argparse.ArgumentParser(prog='PROG', formatter_class=argparse.RawDescriptionHelpFormatter,\
     epilog=textwrap.dedent('''\
          Here an example on how to run the script:
-         python3 create_plots.py --out plots.pdf
+         python3 create_plots.py --input_file results.json --out plots.pdf
          '''))
 parser.add_argument("--input", action="store", dest="input_file", default="results.json", \
             help="name of the json file where the results are stored")         
