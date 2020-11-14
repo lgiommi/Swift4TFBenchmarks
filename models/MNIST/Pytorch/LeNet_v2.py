@@ -176,7 +176,7 @@ def training_loop(model, criterion, optimizer, train_loader, valid_loader, epoch
             valid_accuracies.append(float(valid_acc))
                 
             print(f'{datetime.now().time().replace(microsecond=0)} --- '
-                  f'Epoch: {epoch}\t'
+                  f'Epoch: {epoch+1}\t'
                   f'Train loss: {train_loss:.4f}\t'
                   f'Valid loss: {valid_loss:.4f}\t'
                   f'Train accuracy: {100 * train_acc:.2f}\t'
