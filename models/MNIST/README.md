@@ -17,9 +17,10 @@ model.add(Dense(units=10, activation='softmax'))
 
 model.compile(optimizer=SGD(learning_rate=0.1), loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 ```
-###Benchmarks
+### Benchmarks
 The benchmark.sh bash script allows to run consecutively swift, keras and pytorch models producing a json file
 as output with information about the values of the metrics obtained during the training process and the time spent
 for different operations like the training phase. An example of usage is:
 ```
-source benchmark.sh 2 0.1 128 results.json
+source benchmark.sh -epochs 2 -lr 0.1 -batch_size 128 -out results.json
+
