@@ -18,8 +18,25 @@ import TrainingLoop
 import CoreFoundation
 import Foundation
 
+func readLocalFile(forName paramsFile: String) -> [Any] {
+    let url = Bundle.main.url(forResource: paramsFile, withExtension: "json")!
+    do {
+        let jsonData = try Data(contentsOf: url)
+        let json = try JSONSerialization.jsonObject(with: jsonData) as! [String:Any]
 
-func LeNetTrainMNIST(_ epochCount: Int = 5, _ learningRate: Float = 0.1, _ batchSize: Int = 128, _ out : String = "results.json") {
+        let epochCount : Int = json["epochs"] as! Int
+        let learningRate : Double = json["lr"] as! Double
+        let batchSize : Int = json["batchSize"] as! Int
+        let out : String = json["out"] as! String
+        return([epochCount,learningRate,batchSize,out])
+    }
+    catch {
+        print(error)
+    }
+    return([])
+}
+
+func LeNetTrainMNIST(_ paramsFile : String = "params") {
 
     // Until https://github.com/tensorflow/swift-apis/issues/993 is fixed, default to the eager-mode
     // device on macOS instead of X10.
@@ -28,7 +45,18 @@ func LeNetTrainMNIST(_ epochCount: Int = 5, _ learningRate: Float = 0.1, _ batch
 #else
       let device = Device.defaultXLA
 #endif
-
+    
+    let BundlePath = Bundle.main.resourcePath!
+    print("The \(paramsFile) file  is stored in the following path \(BundlePath)")
+    
+    let paramsFile = paramsFile.replacingOccurrences(of: ".json", with: "")
+    let results = readLocalFile(forName: paramsFile)
+    print(results)
+    let epochCount = results[0] as! Int
+    let learningRate = results[1] as! Double
+    let batchSize = results[2] as! Int
+    let out = results[3] as! String
+    
     let dataset = MNIST(batchSize: batchSize, on: device)
 
     // The   model, equivalent to `LeNet` in `ImageClassificationModels`.
@@ -43,7 +71,7 @@ func LeNetTrainMNIST(_ epochCount: Int = 5, _ learningRate: Float = 0.1, _ batch
         Dense<Float>(inputSize: 20, outputSize: 10)
     }
     
-    let optimizer = SGD(for: classifier, learningRate: learningRate)
+    let optimizer = SGD(for: classifier, learningRate: Float(learningRate))
 
     let trainingProgress = TrainingProgress()
     var trainingLoop = TrainingLoop(
