@@ -23,8 +23,9 @@ printf "Argument batch_size is %s\n" "$6"
 printf "Argument out is %s\n" "$8"
 printf "Argument plots is %s\n" "${10}"
 
+rootPath=`pwd`
 cd ./SwiftML
-swift run swift-ml LeNet --epochs $2 --learning-rate $4 --batch-size $6 --out $8
+swift run swift-ml LeNet -p ${rootPath}/../params.json
 cd -
 mv $HOME/Library/Application\ Support/results.json . 
 python3 ./Keras/LeNet.py --epochs $2 --lr $4 --batch_size $6 --out $8

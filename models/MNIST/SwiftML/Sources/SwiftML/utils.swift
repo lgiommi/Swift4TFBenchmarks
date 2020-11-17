@@ -49,3 +49,38 @@ func inspectData(fname: String, num: Int = 5) {
     f.close()
 }
 
+// function for reading local json parameter files
+func readLocalFile(forName paramsFile: String) -> [Any] {
+    let url = URL(string: "file://\(paramsFile)")!
+    //let url = Bundle.main.url(forResource: paramsFile, withExtension: "json")!
+    do {
+        let jsonData = try Data(contentsOf: url)
+        let json = try JSONSerialization.jsonObject(with: jsonData) as! [String:Any]
+
+        let epochCount : Int = json["epochs"] as! Int
+        let learningRate : Double = json["lr"] as! Double
+        let batchSize : Int = json["batchSize"] as! Int
+        let out : String = json["out"] as! String
+        return([epochCount,learningRate,batchSize,out])
+    }
+    catch {
+        print(error)
+    }
+    return([])
+}
+
+// copy local files from one path to another
+func copyFiles (fromString : String, toString : String) {
+    let fileManager = FileManager.default
+    let toURL = URL(string: "file://\(toString)/topolino.json")!
+    let fromURL = URL(string: "file://\(fromString)")!
+    do{
+        if fileManager.fileExists(atPath: "\(toString)/topolino.json") {
+            try! fileManager.removeItem(atPath: "\(toString)/topolino.json")
+        }
+        try fileManager.copyItem(at: fromURL, to: toURL)
+        print("copied")
+    } catch let error {
+        NSLog("Error in copying Data.plist: \(error)") // see the above quoted error message from here
+    }
+}
