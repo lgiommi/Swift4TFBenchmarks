@@ -59,7 +59,7 @@ func readLocalFile(forName paramsFile: String) -> [Any] {
 
         let epochCount : Int = json["epochs"] as! Int
         let learningRate : Double = json["lr"] as! Double
-        let batchSize : Int = json["batchSize"] as! Int
+        let batchSize : Int = json["batch_size"] as! Int
         let out : String = json["out"] as! String
         return([epochCount,learningRate,batchSize,out])
     }

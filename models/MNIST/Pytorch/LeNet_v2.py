@@ -24,26 +24,27 @@ import textwrap
 parser = argparse.ArgumentParser(prog='PROG', formatter_class=argparse.RawDescriptionHelpFormatter,\
     epilog=textwrap.dedent('''\
          Here an example on how to run the script:
-         python3 LeNet_v2.py --epochs 2 --lr 0.1 --batch_size 128 --out results.json
+         python3 LeNet.py --params $PWD/../params.json
          '''))
-parser.add_argument("--epochs", action="store", dest="epochs", default=2, \
-            help="number of epochs used to train the model")
-parser.add_argument("--lr", action="store", dest="lr", default=0.1, \
-            help="learning rate")
-parser.add_argument("--batch_size", action="store", dest="batch_size", default=128, \
-            help="batch size")
-parser.add_argument("--out", action="store", dest="out", default="results.json", \
-            help="name of the output file with results")
+parser.add_argument("--params", action="store", dest="params", default='', \
+            help="name of the params file with absolute path")
 
 opts = parser.parse_args()
-print(f"learning rate: {opts.lr}\tbatch size: {opts.batch_size}\tepochs: {opts.epochs}")
+if not opts.params:
+    print('No params file is provided')
+    sys.exit(1)
+params=opts.params
 
-# parameters
-RANDOM_SEED = 42
-LEARNING_RATE = float(opts.lr)
-BATCH_SIZE = int(opts.batch_size)
-N_EPOCHS = int(opts.epochs)
-OUT = str(opts.out)
+with open(params) as json_file:
+    data = json.load(json_file)
+
+RANDOM_SEED=42
+LEARNING_RATE = float(data['lr'])
+BATCH_SIZE = int(data['batch_size'])
+N_EPOCHS = int(data['epochs'])
+OUT = str(data['out'])
+
+print(f"learning rate: {LEARNING_RATE}\tbatch size: {BATCH_SIZE} \tepochs: {N_EPOCHS}\toutput file: {OUT}")
 
 IMG_SIZE = 28
 N_CLASSES = 10
