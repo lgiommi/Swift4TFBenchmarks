@@ -8,14 +8,16 @@ parser = argparse.ArgumentParser(prog='PROG', formatter_class=argparse.RawDescri
          Here an example on how to run the script:
          python3 create_plots.py --input_file results.json --out plots.pdf
          '''))
-parser.add_argument("--input", action="store", dest="input_file", default="results.json", \
-            help="name of the json file where the results are stored")         
-parser.add_argument("--output", action="store", dest="out", default="results.json", \
-            help="name of the output file to store the plots")
+parser.add_argument("--params", action="store", dest="params", default='', \
+            help="name of the params file with absolute path")
 
 opts = parser.parse_args()
-INPUT = str(opts.input_file)
-OUTPUT = str(opts.out)
+params=opts.params
+with open(params) as json_file:
+    data = json.load(json_file)
+
+INPUT = str(data["out"])
+OUTPUT = str(data["plots"])
 
 with open(INPUT) as json_file:
     data = json.load(json_file)

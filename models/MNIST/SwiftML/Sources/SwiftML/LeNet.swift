@@ -36,7 +36,6 @@ func LeNetTrainMNIST(_ paramsFile : String = "params.json") {
     
     //let paramsFile = paramsFile.replacingOccurrences(of: ".json", with: "")
     let results = readLocalFile(forName: paramsFile)
-    print(results)
     let epochCount = results[0] as! Int
     let learningRate = results[1] as! Double
     let batchSize = results[2] as! Int
@@ -98,12 +97,12 @@ func LeNetTrainMNIST(_ paramsFile : String = "params.json") {
     let dictionary: [String: Any] = ["Swift": ["loss": lossT_list, "accuracy": accT_list, "val_loss": lossV_list, "val_accuracy": accV_list, "trainTime": trainTime]]
     
     do {
-        let fileURL = try FileManager.default
-            .url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-            .appendingPathComponent(out)
+        let url = URL(string: "file://\(paramsFile)")!
+        let path = url.deletingLastPathComponent().relativePath
+        let url_out = URL(string: "file://\(path)/\(out)")!
 
         try JSONSerialization.data(withJSONObject: dictionary)
-            .write(to: fileURL)
+            .write(to: url_out)
     } catch {
         print(error)
     }

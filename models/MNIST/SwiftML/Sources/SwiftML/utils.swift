@@ -56,11 +56,12 @@ func readLocalFile(forName paramsFile: String) -> [Any] {
     do {
         let jsonData = try Data(contentsOf: url)
         let json = try JSONSerialization.jsonObject(with: jsonData) as! [String:Any]
-
         let epochCount : Int = json["epochs"] as! Int
         let learningRate : Double = json["lr"] as! Double
         let batchSize : Int = json["batch_size"] as! Int
         let out : String = json["out"] as! String
+        let plots : String = json["plots"] as! String
+        print("learning rate: \(learningRate)\tbatch size: \(batchSize)\tepochs: \(epochCount)\toutput file: \(out)\tplots file: \(plots)")
         return([epochCount,learningRate,batchSize,out])
     }
     catch {

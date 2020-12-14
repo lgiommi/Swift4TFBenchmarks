@@ -11,6 +11,7 @@ from tensorflow.keras.layers import Flatten
 from tensorflow.keras.optimizers import SGD
 import time
 import json
+import sys
 
 import argparse
 import textwrap
@@ -21,7 +22,7 @@ parser = argparse.ArgumentParser(prog='PROG', formatter_class=argparse.RawDescri
          python3 LeNet.py --params $PWD/../params.json
          '''))
 parser.add_argument("--params", action="store", dest="params", default='', \
-            help="name of the params file with absolute path")
+            help="name of the params file")
 
 opts = parser.parse_args()
 if not opts.params:
@@ -36,8 +37,9 @@ LEARNING_RATE = float(data['lr'])
 BATCH_SIZE = int(data['batch_size'])
 N_EPOCHS = int(data['epochs'])
 OUT = str(data['out'])
+PLOTS = str(data["plots"])
 
-print(f"learning rate: {LEARNING_RATE}\tbatch size: {BATCH_SIZE} \tepochs: {N_EPOCHS}\toutput file: {OUT}")
+print(f"learning rate: {LEARNING_RATE}\tbatch size: {BATCH_SIZE} \tepochs: {N_EPOCHS}\toutput file: {OUT}\tplots file: {PLOTS}")
 
 # load dataset
 (x_train, y_train), (x_test, y_test) = load_data()
