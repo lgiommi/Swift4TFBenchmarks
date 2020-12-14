@@ -1,16 +1,21 @@
+Here an example of usage of the Lenet.py example:
 ```
-python3 LeNet.py --help
-usage: PROG [-h] [--epochs EPOCHS] [--lr LR] [--batch_size BATCH_SIZE] [--out OUT]
+python LeNet.py --help
+usage: PROG [-h] [--params PARAMS]
 
 optional arguments:
-  -h, --help            show this help message and exit
-  --epochs EPOCHS       number of epochs used to train the model
-  --lr LR               learning rate
-  --batch_size BATCH_SIZE
-                        batch size
-  --out OUT             name of the output file with results
+  -h, --help       show this help message and exit
+  --params PARAMS  name of the params file
 
 Here an example on how to run the script:
-python3 LeNet.py --epochs 2 --lr 0.1 --batch_size 128 --out results.json
+python3 LeNet.py --params $PWD/../params.json
 ```
-
+An example of the params file is the following:
+```
+{
+    "epochs": 3, 
+    "batch_size": 128, 
+    "lr":0.1, 
+    "out":"output.json",
+    "plots":"plots.pdf"
+}
