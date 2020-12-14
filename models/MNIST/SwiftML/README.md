@@ -27,8 +27,8 @@ swift build
 # run our executable
 swift run swift-ml --help
 
-# run our training for 5 epochs using 128 batch size and save model to model.tf file
-swift run swift-ml LeNet -e 5 --batch-size 128
+# run our training using parameters from the params.json file
+swift run swift-ml LeNet -p ${rootPath}/params.json
 
 # clean-up our build
 swift package clean
