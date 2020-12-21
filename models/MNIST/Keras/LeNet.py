@@ -1,4 +1,6 @@
 # example of a cnn for image classification
+import os
+os.environ['CUDA_VISIBLE_DEVICES'] = "0"
 from numpy import asarray
 from numpy import unique
 from numpy import argmax
